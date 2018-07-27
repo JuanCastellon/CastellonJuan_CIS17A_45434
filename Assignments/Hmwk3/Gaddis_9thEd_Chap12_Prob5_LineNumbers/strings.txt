@@ -1,0 +1,9 @@
+hello
+banana
+fruit
+meat
+mouse
+triangle
+this
+is
+hard
