@@ -42,6 +42,13 @@ void Player::setScre(float s){
 void Player::setIndx(int i){
     index=i;
 }
+void Player::setYaht(int y){
+    yah=y;
+}
+void Player::setRoll(int r){
+    rolls=r;
+}
+
 //Getter Functions
 string Player::getName(){
     return name;
@@ -58,7 +65,12 @@ int Player::getChan(){
 int Player::getYaht(){
     return yah;
 }
-
+int Player::getRoll(){
+    return rolls;
+}
+int Player::getTurn(){
+    return turns;
+}
 
 //Game Functions
 void Player::incYaht(){
@@ -67,3 +79,18 @@ void Player::incYaht(){
 void Player::incChan(){
     chance++;
 }
+void Player::incTurn(){
+    turns++;
+}
+
+//Operator Overloads
+Player Player::operator ++ (){
+    ++yah;
+    return *this;
+}
+Player Player::operator -- (){
+    --rolls;
+    return *this;
+}
+
+int Player::turns=1;

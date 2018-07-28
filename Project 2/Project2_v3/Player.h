@@ -41,24 +41,42 @@ public:
     void setName(string);
     void setScre(float);
     void setIndx(int);
+    void setYaht(int);
+    void setRoll(int);
+    
     
     //Getter Functions
     string getName();
     float getScre();
+    int getYaht();
     int getIndx();
     int getChan();
-    int getYaht();
+    int getRoll();
+    int getTurn();
+    
+    
     
     //Game functions
     void incYaht();//Increments the amount of yahtzees a player has gotten
     void incChan();//Increments the chance counter of the player
+    void incTurn();//Decrements the turns
     
-private:
+    
+    
+    //Overloaded Operator Functions
+    Player operator ++ ();//Overloaded ++
+    Player operator -- ();//Overloaded --
+    
+    
+protected:
+    static int turns;
+    
+    int chance; //Chance counter for each player
+    int index;  //For determining who goes first
     string name;//Name of Player
     float score;//Score of Player
     int yah;    //Yahtzee counter for each player
-    int chance; //Chance counter for each player
-    int index;  //For determining who goes first
+    int rolls;
 };
 
 #endif /* PLAYER_H */

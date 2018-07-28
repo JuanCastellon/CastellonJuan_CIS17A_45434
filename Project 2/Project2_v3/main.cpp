@@ -11,6 +11,8 @@
 //User Libraries Here
 #include "Player.h"
 #include "Dice.h"
+#include "Winner.h"
+#include <array>
 
 //Global Constants Only, No Global Variables
 //Allowed like PI, e, Gravity, conversions, array dimensions necessary
@@ -42,6 +44,8 @@ int main(int argc, char** argv) {
     
     //Member Function Variables
     string name;
+    float score;
+    int yah;
     
     //12341234123412341234123412341234123412341234123412341234123412341234123412
     //End of Variable Declaring
@@ -61,6 +65,8 @@ int main(int argc, char** argv) {
     if(deci=='n'){
         exit(0);
     }
+    //Intialization of the static variable
+    
     
     //Determining how many players are going to play the game
     cout<<"How many players are going to play the game? Pick from 2-5."<<endl;
@@ -95,20 +101,43 @@ int main(int argc, char** argv) {
     //Turns of the game (there are 20 of them)
     do{
         cout<<"==========="<<endl;
-        cout<<"==Turn "<<turns<<"=="<<endl;
+        cout<<"==Turn "<<plyr->getTurn()<<"=="<<endl;
         cout<<"==========="<<endl;
         turn(dice,DICE,plyr,nPlyr);
-        turns++;
-    }while(turns<=20);
+        plyr->incTurn();
+        
+    }while(plyr->getTurn()<=20);
     
-    //Display Results
+    //Organizing the array of objects based on score
+    for(int i=0;i<nPlyr;i++){
+        int indx1,indx2;
+        for(int j=i+1;j<nPlyr;j++){
+            indx1=plyr[i].getIndx();
+            indx2=plyr[j].getIndx();
+            if(plyr[i].getScre()<plyr[j].getScre()){
+                Player temp=plyr[i];
+                plyr[i]=plyr[j];
+                plyr[j]=temp;
+            }
+        }
+    }
     
+    //For initializing
+    name=plyr[0].getName();
+    score=plyr[0].getScre();
+    yah=plyr[0].getYaht();
     
-    //Exit
+    //Naming the winner (the first player in the array since it's organized)
+    Winner winner(name,score,yah);
     
+    //Displaying the winner's stats
+    winner.results();
+    
+    //Deleting Memory
     delete [] plyr;
     delete [] dice;
     
+    //Exit
     return 0;
 }
 void first(Dice *dice,int nDice,Player *plyr,int nPlyr){
@@ -153,19 +182,19 @@ void first(Dice *dice,int nDice,Player *plyr,int nPlyr){
 }
 void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
     int choice;  //Choice of scoring
-    int pCount;  //Counter to see what player is currently up
     char decis;  //Decision to reroll any dice
     
-    //Initializing Variables
-    pCount=0;
     
     for(int i=0;i<nPlyr;i++){
         //Variables that need to be reset for each player every time
         const int SIZE=5;//Size of the array equivalent to the number of dice
-        int roll[SIZE];  //Array for sorting/scoring. Makes things easier
+        array <int,SIZE>roll;//Array for sorting/scoring. Makes things easier
         int rolls=3;     //Max amount of times you can reroll dice is 3
         int counter=0;   //Counter for scoring later on
         int pChance=plyr[i].getChan();//For determining if chance has been used
+        
+        //Variables in the class that need to be initialized
+        plyr[i].setRoll(3);//They get 3 rerolls
         
         cout<<plyr[i].getName()<<" is rolling..."<<endl;
         
@@ -224,20 +253,18 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
                 dice[i].display();
                 cout<<endl;
                 
-                rolls--;
-                cout<<"Rerolls left : "<<rolls<<endl;
+                --plyr[i];
+                cout<<"Rerolls left : "<<plyr[i].getRoll()<<endl;
                 
                 
-                if(rolls!=0){
+                if(plyr[i].getRoll()!=0){
                     cout<<"Would you like to reroll again?"<<endl;
                     cout<<"y/n : ";
 
                     cin>>decis;
                     cout<<endl;
                 }
-                
-                
-            }while(decis=='y'&&rolls!=0);
+            }while(decis=='y'&&plyr[i].getRoll()!=0);
         }
         
         //Copying the numbers in the dice object to an array for easier scoring
@@ -401,7 +428,18 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
             }
             case 7:{
                 cout<<"Scoring 3 of a Kind"<<endl;
-                sort(roll,nDice);
+                
+                //The Bubble Sort
+                for(int i=0;i<nDice;i++){
+                    for(int j=i+1;j<nDice;j++){
+                        if(roll[i]>roll[j]){
+                            int temp=roll[i];
+                            roll[i]=roll[j];
+                            roll[j]=temp;
+                        }
+                    }
+                }
+                
                 int temp=roll[0];
                 for(int count=0;count<nDice;count++){
                     roll[count]==temp?counter++:temp=roll[count];
@@ -415,7 +453,18 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
             }
             case 8:{
                 cout<<"Scoring 4 of a Kind"<<endl;
-                sort(roll,nDice);
+                
+                //The Bubble Sort
+                for(int i=0;i<nDice;i++){
+                    for(int j=i+1;j<nDice;j++){
+                        if(roll[i]>roll[j]){
+                            int temp=roll[i];
+                            roll[i]=roll[j];
+                            roll[j]=temp;
+                        }
+                    }
+                }
+                
                 int temp=roll[0];
                 for(int count=0;count<nDice;count++){
                     if(roll[count]==temp){
@@ -447,7 +496,19 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
             }
             case 10:{
                 cout<<"Scoring Small Straight"<<endl;
-                sort(roll,nDice);
+                
+                //The Bubble Sort
+                for(int i=0;i<nDice;i++){
+                    for(int j=i+1;j<nDice;j++){
+                        if(roll[i]>roll[j]){
+                            int temp=roll[i];
+                            roll[i]=roll[j];
+                            roll[j]=temp;
+                        }
+                    }
+                }
+                
+                //Scoring
                 if((roll[4]-roll[3])==1){
                     if((roll[3]-roll[2]==1)){
                         if((roll[2]-roll[1]==1)){
@@ -466,7 +527,19 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
             }
             case 11:{
                 cout<<"Scoring Long Straight"<<endl;
-                sort(roll,nDice);
+                
+                //The Bubble Sort
+                for(int i=0;i<nDice;i++){
+                    for(int j=i+1;j<nDice;j++){
+                        if(roll[i]>roll[j]){
+                            int temp=roll[i];
+                            roll[i]=roll[j];
+                            roll[j]=temp;
+                        }
+                    }
+                }
+                
+                //Scoring
                 if((roll[4]-roll[3])==1){
                     if((roll[3]-roll[2]==1)){
                         if((roll[2]-roll[1]==1)){
@@ -484,7 +557,8 @@ void turn(Dice *dice,int nDice,Player *plyr,int nPlyr){
                     if(plyr[i].getYaht()>0){
                         plyr[i].setScre(100);
                     }else if(&plyr[i].getYaht==0){
-                        plyr[i].setScre(50);  
+                        plyr[i].setScre(50);
+                        ++plyr[i];
                     } 
                 }
                 break;

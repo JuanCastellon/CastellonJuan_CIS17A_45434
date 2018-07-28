@@ -8,18 +8,25 @@
  * File:   Winner.h
  * Author: Juan
  *
- * Created on July 27, 2018, 8:08 PM
+ * Created on July 27, 2018, 10:00 PM
  */
 
 #ifndef WINNER_H
 #define WINNER_H
 
-class Winner {
+#include "Player.h"
+
+class Winner : public Player{
 public:
+    //Constuctor
     Winner();
+    //Constructor
+    Winner(string,float,int);
     Winner(const Winner& orig);
     virtual ~Winner();
-private:
+    
+    //Results
+    void results();
 
 };
 
